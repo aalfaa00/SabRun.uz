@@ -1,8 +1,15 @@
 import Head from 'next/head';
 import Navbar from '../components/Navbar';
-import Test from '../components/test'
+import Banner from '../components/Banner';
+import { Product } from "../type";
+import Products from '../components/Products';
 
-export default function Home() {
+interface Props {
+  productData: Product
+}
+
+export default function Home({productData}:Props) {
+  console.log(productData);
   return (
     <>
       <Head>
@@ -11,12 +18,27 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/smallLogo.ico" />
       </Head>
-      <main>
+      <main className="bg-lightBlue">
         <Navbar />
+        <div className="max-w-contentContainer mx-auto bg-white">
+          <Banner />
+          <Products productData={productData} />
+        </div>
       </main>
-      <main>
-        <Test/>
-      </main>
+
     </>
   )
+}
+
+
+// ========== SSR data fetching start here ===========
+export const getServerSideProps = async() => {
+  const productData = await(
+    await fetch("http://localhost:3000/api/productdata")
+  ).json();
+
+  return {
+    props: {productData},
+  }
+
 }
